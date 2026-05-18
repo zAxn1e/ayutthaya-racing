@@ -5,7 +5,7 @@ import panels.GamePanel;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
-public class MapMain {
+public class GameLauncher {
     private static final String GAME_TITLE = "Merged Maze Game";
 
     public static void launchInFrame(JFrame frame) {

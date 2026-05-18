@@ -1,4 +1,4 @@
-package first_page;
+package menu;
 
 public final class SessionContext {
     private static volatile String currentUser = "Guest";

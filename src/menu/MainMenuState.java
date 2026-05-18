@@ -1,10 +1,10 @@
-package first_page;
+package menu;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
-public class Data {
+public class MainMenuState {
     public final JFrame appFrame;
     public JPanel mainPanel;
     public final JLabel label = new JLabel();
@@ -47,7 +47,7 @@ public class Data {
     public String user;
     public String pass;
 
-    public Data() {
+    public MainMenuState() {
         appFrame = new JFrame("อยุธยา พาซิ่ง!");
         appFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         appFrame.setResizable(false);

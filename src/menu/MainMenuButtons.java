@@ -1,4 +1,4 @@
-package first_page;
+package menu;
 
 import core.data.AppDatabase;
 import core.data.LeaderboardUI;
@@ -12,10 +12,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import core.config.ProjectPaths;
 
-public class BTN {
-    private final Data state;
+public class MainMenuButtons {
+    private final MainMenuState state;
 
-    public BTN(Data state) {
+    public MainMenuButtons(MainMenuState state) {
         this.state = state;
     }
 

@@ -17,9 +17,9 @@ import core.player.CollisionMap;
 import core.player.MazeCollisionMapAdapter;
 import core.player.PlayerController;
 import core.player.PlayerModule;
-import first_page.SessionContext;
-import first_page.Test;
-import game.MapMain;
+import menu.SessionContext;
+import menu.MainMenuScreen;
+import game.GameLauncher;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -259,7 +259,7 @@ public class GamePanel extends JPanel implements Runnable {
         pauseMenuOpen = false;
         clearPauseHover();
         stopGameThread();
-        SwingUtilities.invokeLater(Test::returnToMainMenu);
+        SwingUtilities.invokeLater(MainMenuScreen::returnToMainMenu);
     }
 
     private void restartCurrentGame() {
@@ -269,7 +269,7 @@ public class GamePanel extends JPanel implements Runnable {
         stopGameThread();
         Window window = SwingUtilities.getWindowAncestor(this);
         if (window instanceof javax.swing.JFrame frame) {
-            SwingUtilities.invokeLater(() -> MapMain.launchInFrame(frame));
+            SwingUtilities.invokeLater(() -> GameLauncher.launchInFrame(frame));
         }
     }
 

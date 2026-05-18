@@ -35,6 +35,7 @@ out_merged/
 *.log
 run_*.log
 compile_*.log
+dev/*.log
 
 ### local runtime databases ###
 leaderboard.db

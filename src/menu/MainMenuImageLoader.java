@@ -1,11 +1,11 @@
-package first_page;
+package menu;
 
 import javax.swing.*;
 import core.config.ProjectPaths;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class setIMG {
+public class MainMenuImageLoader {
     private ImageIcon placeholder(String name, int w, int h) {
         BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = img.createGraphics();
@@ -24,8 +24,8 @@ public class setIMG {
         return new ImageIcon(img);
     }
 
-    public void prepareImages(Data state) {
-        System.out.println("setIMG: resourcesRoot=" + ProjectPaths.resourcesRoot());
+    public void prepareImages(MainMenuState state) {
+        System.out.println("MainMenuImageLoader: resourcesRoot=" + ProjectPaths.resourcesRoot());
 
         state.frames = new ImageIcon[22];
         for (int i = 0; i < 22; i++) {
@@ -33,7 +33,7 @@ public class setIMG {
             String p = ProjectPaths.uiFilePath(fname);
             ImageIcon ic = new ImageIcon(p);
             if (ic.getIconWidth() <= 0) {
-                System.out.println("setIMG: missing " + p + " — using placeholder");
+                System.out.println("MainMenuImageLoader: missing " + p + " — using placeholder");
                 ic = placeholder(fname, 1024, 768);
             }
             state.frames[i] = ic;
@@ -45,7 +45,7 @@ public class setIMG {
             String p = ProjectPaths.uiFilePath(fname);
             ImageIcon ic = new ImageIcon(p);
             if (ic.getIconWidth() <= 0) {
-                System.out.println("setIMG: missing " + p + " — using placeholder");
+                System.out.println("MainMenuImageLoader: missing " + p + " — using placeholder");
                 ic = placeholder(fname, 1024, 768);
             }
             state.loginFrames[i] = ic;
@@ -57,7 +57,7 @@ public class setIMG {
             String p = ProjectPaths.uiFilePath(fname);
             ImageIcon ic = new ImageIcon(p);
             if (ic.getIconWidth() <= 0) {
-                System.out.println("setIMG: missing " + p + " — using placeholder");
+                System.out.println("MainMenuImageLoader: missing " + p + " — using placeholder");
                 ic = placeholder(fname, 1024, 768);
             }
             state.regisFrames[i] = ic;
@@ -68,7 +68,7 @@ public class setIMG {
             String p = ProjectPaths.uiFilePath(fname);
             ImageIcon ic = new ImageIcon(p);
             if (ic.getIconWidth() <= 0) {
-                System.out.println("setIMG: missing " + p + " — using placeholder");
+                System.out.println("MainMenuImageLoader: missing " + p + " — using placeholder");
                 ic = placeholder(fname, 400, 200);
             }
             state.popFrames = new ImageIcon[]{ic};
@@ -93,14 +93,14 @@ public class setIMG {
             state.countdownFrames[i] = loadOrPlaceholder(fname, 1024, 768);
         }
 
-        System.out.println("setIMG: prepareImages done");
+        System.out.println("MainMenuImageLoader: prepareImages done");
     }
 
     private ImageIcon loadOrPlaceholder(String fname, int w, int h) {
         String p = ProjectPaths.uiFilePath(fname);
         ImageIcon ic = new ImageIcon(p);
         if (ic.getIconWidth() <= 0) {
-            System.out.println("setIMG: missing " + p + " — using placeholder");
+            System.out.println("MainMenuImageLoader: missing " + p + " — using placeholder");
             ic = placeholder(fname, w, h);
         }
         return ic;

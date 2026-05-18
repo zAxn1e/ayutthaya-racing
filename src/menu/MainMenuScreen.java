@@ -1,23 +1,23 @@
-package first_page;
+package menu;
 
 import core.data.AppDatabase;
-import game.MapMain;
+import game.GameLauncher;
 import panels.GamePanel;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class Test {
-    private static Test instance;
+public class MainMenuScreen {
+    private static MainMenuScreen instance;
 
-    private final Data state;
-    private final setIMG imageLoader;
-    private final BTN buttons;
+    private final MainMenuState state;
+    private final MainMenuImageLoader imageLoader;
+    private final MainMenuButtons buttons;
 
-    private Test() {
-        state = new Data();
-        imageLoader = new setIMG();
-        buttons = new BTN(state);
+    private MainMenuScreen() {
+        state = new MainMenuState();
+        imageLoader = new MainMenuImageLoader();
+        buttons = new MainMenuButtons(state);
     }
 
     public static void main(String[] args) {
@@ -25,7 +25,7 @@ public class Test {
             instance.focusWindow();
             return;
         }
-        instance = new Test();
+        instance = new MainMenuScreen();
         instance.start();
     }
 
@@ -43,15 +43,15 @@ public class Test {
         } catch (Exception e) {
             throw new IllegalStateException("Failed to initialize database", e);
         }
-        System.out.println("Test: start() - loading font and images");
+        System.out.println("MainMenuScreen: start() - loading font and images");
         state.loadCustomFont();
         imageLoader.prepareImages(state);
-        System.out.println("Test: images loaded: frames=" + (state.frames==null?0:state.frames.length) +
+        System.out.println("MainMenuScreen: images loaded: frames=" + (state.frames==null?0:state.frames.length) +
                 " login=" + (state.loginFrames==null?0:state.loginFrames.length) +
                 " regis=" + (state.regisFrames==null?0:state.regisFrames.length) +
                 " countdown=" + (state.countdownFrames==null?0:state.countdownFrames.length));
         setupFirstScreen();
-        System.out.println("Test: setupFirstScreen done; UI should be visible");
+        System.out.println("MainMenuScreen: setupFirstScreen done; UI should be visible");
     }
 
     private void setupFirstScreen() {
@@ -114,7 +114,7 @@ public class Test {
         if (state.introTimer != null) {
             state.introTimer.stop();
         }
-        MapMain.launchInFrame(state.appFrame);
+        GameLauncher.launchInFrame(state.appFrame);
     }
 
     private void setupUserBox() {

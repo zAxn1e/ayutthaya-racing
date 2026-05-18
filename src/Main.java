@@ -1,5 +1,5 @@
 import editor.MazeEditorWindow;
-import game.MapMain;
+import game.GameLauncher;
 import javax.swing.SwingUtilities;
 
 import core.config.ProjectPaths;
@@ -25,11 +25,11 @@ public class Main {
                 return;
             }
             if ("game".equalsIgnoreCase(args[0])) {
-                SwingUtilities.invokeLater(() -> MapMain.main(new String[0]));
+                SwingUtilities.invokeLater(() -> GameLauncher.main(new String[0]));
                 return;
             }
         }
 
-        SwingUtilities.invokeLater(() -> first_page.Test.main(args));
+        SwingUtilities.invokeLater(() -> menu.MainMenuScreen.main(args));
     }
 }
