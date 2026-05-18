@@ -1,0 +1,65 @@
+{
+  "character": {
+    "id": "12fdcb94-7d6e-4d6d-bf95-7f5e659d03df",
+    "name": "Thief",
+    "prompt": "A small chibi-style thief character designed for a 2D pixel art RPG game. The character wears a dark black knitted beanie hat, a black eye mask covering the eyes, and has light skin with a mischievous expression. Outfit consists of a black-and-white horizontal striped long-sleeve shirt, slim black pants, and plain black shoes. The thief carries a large brown sack of stolen goods over one shoulder with one hand gripping the sack tightly. Compact body proportions with a slightly oversized head, short limbs, and clean silhouette for easy animation readability. Retro 16-bit pixel art style, detailed pixel shading, side-view RPG sprite aesthetic, transparent background. Consistent design intended for all directional rotations and animation frames.",
+    "size": {
+      "width": 92,
+      "height": 92
+    },
+    "template_id": "mannequin",
+    "directions": 8,
+    "view": "side",
+    "created_at": "2026-05-08T20:22:03.84321+00:00"
+  },
+  "frames": {
+    "rotations": {
+      "south": "rotations/south.png",
+      "south-east": "rotations/south-east.png",
+      "east": "rotations/east.png",
+      "north-east": "rotations/north-east.png",
+      "north": "rotations/north.png",
+      "north-west": "rotations/north-west.png",
+      "west": "rotations/west.png",
+      "south-west": "rotations/south-west.png"
+    },
+    "animations": {
+      "Running": {
+		  "north": [
+          "animations/Running-7f24bc93/north/frame_000.png",
+          "animations/Running-7f24bc93/north/frame_001.png",
+          "animations/Running-7f24bc93/north/frame_002.png",
+          "animations/Running-7f24bc93/north/frame_003.png",
+          "animations/Running-7f24bc93/north/frame_004.png",
+          "animations/Running-7f24bc93/north/frame_005.png"
+        ],
+        "east": [
+          "animations/Running-80d64a81/east/frame_000.png",
+          "animations/Running-80d64a81/east/frame_001.png",
+          "animations/Running-80d64a81/east/frame_002.png",
+          "animations/Running-80d64a81/east/frame_003.png",
+          "animations/Running-80d64a81/east/frame_004.png",
+          "animations/Running-80d64a81/east/frame_005.png"
+        ],
+        "south": [
+          "animations/Running-80d64a81/south/frame_000.png",
+          "animations/Running-80d64a81/south/frame_001.png",
+          "animations/Running-80d64a81/south/frame_002.png",
+          "animations/Running-80d64a81/south/frame_003.png",
+          "animations/Running-80d64a81/south/frame_004.png",
+          "animations/Running-80d64a81/south/frame_005.png"
+        ],
+        "west": [
+          "animations/Running-80d64a81/west/frame_000.png",
+          "animations/Running-80d64a81/west/frame_001.png",
+          "animations/Running-80d64a81/west/frame_002.png",
+          "animations/Running-80d64a81/west/frame_003.png",
+          "animations/Running-80d64a81/west/frame_004.png",
+          "animations/Running-80d64a81/west/frame_005.png"
+        ]
+      }
+    }
+  },
+  "export_version": "2.0",
+  "export_date": "2026-05-08T20:39:42.055289"
+}

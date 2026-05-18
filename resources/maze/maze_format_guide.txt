@@ -1,0 +1,41 @@
+MAZE TEXT FORMAT
+
+Loader path:
+- src/core/level/io/MazeTextLoader.java
+
+Default load path:
+- resources/maze/default_58x44.txt
+
+Rules:
+- One text row = one maze row
+- All rows must have the same width
+- Metadata comment: ; key=value
+- Supported metadata keys:
+  ; name=...
+  ; tileSize=16
+  ; background=..\map\your_bg.png
+- Wall cells: #, X, 1
+- Empty cells: ., space, 0
+- Player spawn: P
+- Ghost spawn: G
+- Pellet: o
+- Power pellet: O
+- Comment lines start with ;
+- Blank lines are ignored
+
+Example:
+; 10x6 example
+##########
+#........#
+#.####...#
+#....#...#
+#........#
+##########
+
+Recommended AI prompt output:
+- Return metadata comments only if needed
+- If using a background image, include ; background=relative-or-absolute-path
+- Use # for walls and . for empty walkable tiles
+- Use P/G/o/O only when intentionally placing special cells
+- Keep all rows the same width
+- Add a solid wall border

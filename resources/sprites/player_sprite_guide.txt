@@ -1,0 +1,23 @@
+PLAYER SPRITE QUICK GUIDE
+=========================
+
+Default file:
+- resources\sprites\player.png
+
+Expected sheet format:
+- Width: 128 px
+- Height: 32 px
+- 4 frames in one row
+- Each frame is 32x32
+
+How to replace character:
+1) Create a new sprite sheet with the same size/layout.
+2) Save it as resources\sprites\player.png (replace old file).
+3) Run run_game.bat
+
+If your sprite layout is different, edit:
+- src\core\config\PlayerConfig.java
+  - SPRITE_FRAME_SIZE
+  - SPRITE_FRAME_COUNT
+  - SPRITE_FILE_PATH
+  - SPRITE_CLASSPATH

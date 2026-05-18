@@ -1,0 +1,12 @@
+; Maze shuffle runtime config
+; enabled=false to rotate mazes automatically
+enabled=true
+
+; seconds between shuffles (minimum effective value is 5)
+intervalSeconds=15
+
+; list mazes that can be shuffled (relative to this file's folder)
+mazes=maze_v2_layout_1-zoned,maze_v2_layout_2-zoned
+
+
+
