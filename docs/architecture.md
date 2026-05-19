@@ -102,7 +102,7 @@ graph TB
 | **Entities** | ตัวละคร, movement, sprites | `core.entities.*` |
 | **Level** | โครงสร้างเขาวงกต, file I/O | `core.level.*` |
 | **Collision** | ตรวจการชน, hitbox | `core.player.*` |
-| **Data** | SQLite DB, Leaderboard | `core.data.*` |
+| **Data** | SQLite DB, Leaderboard overlay | `core.data.*` |
 | **Config** | ค่าคงที่, path resolution | `core.config.*` |
 
 ### 2.2 Design Patterns ที่ใช้
@@ -179,8 +179,8 @@ sequenceDiagram
 
     Note over GamePanel: Player hit by enemy
 
-    GamePanel->>AppDatabase: saveScore(user, score)
-    GamePanel->>LeaderboardUI: open(frame)
+    GamePanel->>AppDatabase: saveScore(user, finalScore)
+    GamePanel->>LeaderboardUI: open(frame overlay)
 
     User->>GamePanel: Click "Back to Menu"
     GamePanel->>MainMenuScreen: returnToMainMenu()
@@ -405,7 +405,7 @@ merged_final/
 │   ├── panels/                 ← 2 classes — game loop + debug renderer
 │   ├── core/
 │   │   ├── config/             ← 2 classes — paths + player constants
-│   │   ├── data/               ← 2 classes — database + leaderboard UI
+│   │   ├── data/               ← 2 classes — database + leaderboard overlay
 │   │   ├── debug/              ← 2 classes — debug toggles + snapshots
 │   │   ├── entities/           ← 3 classes — entity hierarchy
 │   │   ├── gameplay/           ← 9 classes — enemy/pickup/spawn systems

@@ -47,7 +47,7 @@ public final class GameplayConfig {
     /** Interval between point pickup spawn checks */
     public static final double POINT_SPAWN_INTERVAL = 2.0;
     /** Score awarded per point pickup */
-    public static final int POINT_SCORE_VALUE = 10;
+    public static final int POINT_SCORE_VALUE = 1;
 
     // ── Kill pickups ──
     /** Max simultaneous kill pickups on the map (across all types) */

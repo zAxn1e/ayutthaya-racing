@@ -31,7 +31,7 @@ echo [..] Launching game...
 echo.
 
 :: Run with full console logging (no redirect)
-java -cp "out_merged;lib\*" Main
+java -Ddev.mode=true -cp "out_merged;lib\*" Main
 
 echo.
 echo ========================================

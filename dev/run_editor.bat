@@ -16,4 +16,4 @@ if errorlevel 1 (
     goto :eof
 )
 
-java -cp "out_merged;lib\*" Main editor
+java -Ddev.mode=true -cp "out_merged;lib\*" Main editor

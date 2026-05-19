@@ -13,11 +13,11 @@ public class MainMenuImageLoader {
             g.setColor(new Color(200, 200, 200));
             g.fillRect(0, 0, w, h);
             g.setColor(Color.RED);
-            g.setFont(new Font("SansSerif", Font.BOLD, Math.max(12, h/10)));
+            g.setFont(new Font("SansSerif", Font.BOLD, Math.max(12, h / 10)));
             String txt = "MISSING: " + name;
             FontMetrics fm = g.getFontMetrics();
             int tw = fm.stringWidth(txt);
-            g.drawString(txt, Math.max(10, (w - tw)/2), Math.max(20, h/2));
+            g.drawString(txt, Math.max(10, (w - tw) / 2), Math.max(20, h / 2));
         } finally {
             g.dispose();
         }
@@ -71,15 +71,15 @@ public class MainMenuImageLoader {
                 System.out.println("MainMenuImageLoader: missing " + p + " — using placeholder");
                 ic = placeholder(fname, 400, 200);
             }
-            state.popFrames = new ImageIcon[]{ic};
+            state.popFrames = new ImageIcon[] { ic };
         }
 
-        state.enterFrames = new ImageIcon[]{
+        state.enterFrames = new ImageIcon[] {
                 loadOrPlaceholder("36.png", 1024, 768),
                 loadOrPlaceholder("37.png", 1024, 768)
         };
 
-        state.gameFrames = new ImageIcon[]{loadOrPlaceholder("game1.png", 1024, 768)};
+        state.gameFrames = new ImageIcon[] { loadOrPlaceholder("game1.png", 1024, 768) };
 
         state.howFrames = new ImageIcon[7];
         for (int i = 0; i < 7; i++) {

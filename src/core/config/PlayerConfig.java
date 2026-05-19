@@ -23,8 +23,10 @@ public final class PlayerConfig {
         // Debug: print resolved sprite paths at JVM startup
         try {
             System.out.println("PlayerConfig: SPRITE_BASE_FILE_PATH=" + SPRITE_BASE_FILE_PATH);
-            System.out.println("PlayerConfig: spriteThiefDirectory()=" + ProjectPaths.spriteThiefDirectory().getCanonicalPath());
-        } catch (Exception ignored) {}
+            System.out.println(
+                    "PlayerConfig: spriteThiefDirectory()=" + ProjectPaths.spriteThiefDirectory().getCanonicalPath());
+        } catch (Exception ignored) {
+        }
     }
     public static final String RUNNING_ANIMATIONS_DIR = "animations\\Running";
     public static final int SPRITE_SOURCE_FRAME_SIZE = 92;

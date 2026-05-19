@@ -24,6 +24,7 @@ public class GameplayManager {
     private double invincibilityTimer;
     private SwitchReport lastSwitchReport;
     private boolean gameOver;
+    private Integer finalScoreSnapshot;
 
     public GameplayManager(Player player, CollisionMap collisionMap, Maze maze) {
         this.player = player;
@@ -34,6 +35,7 @@ public class GameplayManager {
         this.invincibilityTimer = 0;
         this.lastSwitchReport = SwitchReport.empty();
         this.gameOver = false;
+        this.finalScoreSnapshot = null;
     }
 
     /**
@@ -86,6 +88,7 @@ public class GameplayManager {
         if (invincibilityTimer <= 0) {
             List<EnemyState> hitting = enemySystem.getCollidingEnemies(playerBounds);
             if (!hitting.isEmpty()) {
+                finalScoreSnapshot = score;
                 score = Math.max(0, score - GameplayConfig.ENEMY_TOUCH_PENALTY);
                 gameOver = true;
             }
@@ -104,6 +107,7 @@ public class GameplayManager {
     // ── Accessors for HUD ──
 
     public int getScore()              { return score; }
+    public int getFinalScore()         { return finalScoreSnapshot != null ? finalScoreSnapshot : score; }
     public int getCurrentStage()       { return director.getCurrentStage(); }
     public double getElapsedTime()     { return director.getElapsedTime(); }
     public int getAliveEnemyCount()    { return enemySystem.getAliveCount(); }

@@ -1,6 +1,7 @@
 package core.debug;
 
 public class DebugSettings {
+    public static final boolean DEV_MODE = Boolean.getBoolean("dev.mode");
     private boolean enabled = false;
     private boolean hudVisible = true;
     private boolean gridVisible = false;

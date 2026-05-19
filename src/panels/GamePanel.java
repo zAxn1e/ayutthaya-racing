@@ -35,6 +35,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -54,6 +56,9 @@ public class GamePanel extends JPanel implements Runnable {
     private static final String LEGACY_ACTIVE_MAZE_POINTER = ActiveMazeRegistry.LEGACY_ACTIVE_MAZE_POINTER;
     private static final String DEFAULT_RUNTIME_MAZE = ActiveMazeRegistry.DEFAULT_RUNTIME_MAZE;
     private static final String SHUFFLE_CONFIG_PATH = ProjectPaths.mazeShuffleConfigPath();
+    private static final Font HUD_SCORE_FONT = new Font(Font.SERIF, Font.BOLD, 30);
+    private static final Font HUD_HINT_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
+    private static final BufferedImage HUD_STATUE_ICON = createHudStatueIcon();
 
     private final DebugSettings debugSettings;
     private final PlayerController playerController;
@@ -77,7 +82,6 @@ public class GamePanel extends JPanel implements Runnable {
     private volatile GameplayManager.SwitchReport lastEntitySwitchReport;
     private volatile boolean resultSaved;
     private volatile String resultStatusMessage = "";
-    private volatile boolean gameOverLeaderboardShown;
 
     public GamePanel() {
         setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
@@ -95,7 +99,6 @@ public class GamePanel extends JPanel implements Runnable {
         shuffleElapsedSeconds = 0;
         lastEntitySwitchReport = GameplayManager.SwitchReport.empty();
         mazeShuffleConfig = MazeShuffleConfig.loadFromFile(SHUFFLE_CONFIG_PATH, activeMazePath);
-        gameOverLeaderboardShown = false;
 
         installInputBindings();
         installPauseMouseHandling();
@@ -173,7 +176,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     private void bindPauseToggle() {
         String actionKey = "toggle-pause";
-        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), actionKey);
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false),
+                actionKey);
         getActionMap().put(actionKey, new javax.swing.AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -278,8 +282,7 @@ public class GamePanel extends JPanel implements Runnable {
             return ActiveMazeRegistry.resolveRuntimeMazePath(
                     ACTIVE_MAZE_CONFIG_PATH,
                     LEGACY_ACTIVE_MAZE_POINTER,
-                    DEFAULT_RUNTIME_MAZE
-            );
+                    DEFAULT_RUNTIME_MAZE);
         } catch (Exception e) {
             return DEFAULT_RUNTIME_MAZE;
         }
@@ -290,7 +293,8 @@ public class GamePanel extends JPanel implements Runnable {
             return MazeTextLoader.loadFromFile(mazePath, TARGET_TILE_SIZE, null, null);
         } catch (Exception e) {
             System.err.println("Failed to load maze file, fallback to generated layout: " + e.getMessage());
-            Maze mapWithBackground = new Maze(TARGET_MAZE_WIDTH, TARGET_MAZE_HEIGHT, TARGET_TILE_SIZE, null, MAP_V2_BG1_FILE_PATH);
+            Maze mapWithBackground = new Maze(TARGET_MAZE_WIDTH, TARGET_MAZE_HEIGHT, TARGET_TILE_SIZE, null,
+                    MAP_V2_BG1_FILE_PATH);
             return MapV2MazeConverter.buildMazeFromWalls(mapWithBackground, MapV2Layouts.map1Walls());
         }
     }
@@ -304,7 +308,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private RuntimeState buildRuntimeState(Maze maze, String mazePath, Player existingPlayer,
-                                           GameplayManager existingGameplayManager) {
+            GameplayManager existingGameplayManager) {
         CollisionMap newCollisionMap = new MazeCollisionMapAdapter(maze);
         Player player = existingPlayer != null ? existingPlayer : createPlayerAtCenter(newCollisionMap, maze);
         if (existingPlayer != null) {
@@ -329,10 +333,9 @@ public class GamePanel extends JPanel implements Runnable {
                 collisionMap.getWidthInTiles() / 2,
                 collisionMap.getHeightInTiles() / 2,
                 maze.hasAnySpawnZone(),
-                true
-        );
+                true);
         if (spawnTile == null) {
-            spawnTile = new int[]{1, 1};
+            spawnTile = new int[] { 1, 1 };
         }
         int tileSize = collisionMap.getTileSize();
         int playerBodySize = tileSize - PlayerConfig.hitboxInsetForTile(tileSize);
@@ -359,7 +362,7 @@ public class GamePanel extends JPanel implements Runnable {
             tile = findNearestValidPlayerTile(newCollisionMap, newMaze, targetX, targetY, false, true);
         }
         if (tile == null) {
-            tile = new int[]{1, 1};
+            tile = new int[] { 1, 1 };
         }
 
         int tileSize = newCollisionMap.getTileSize();
@@ -369,13 +372,15 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private int[] findNearestValidPlayerTile(CollisionMap collisionMap, Maze maze, int targetX, int targetY,
-                                             boolean zoneRequired, boolean requireCanOccupy) {
+            boolean zoneRequired, boolean requireCanOccupy) {
         int maxRadius = Math.max(collisionMap.getWidthInTiles(), collisionMap.getHeightInTiles());
         int margin = PlayerConfig.collisionMarginForTile(collisionMap.getTileSize());
 
         for (int radius = 0; radius <= maxRadius; radius++) {
-            for (int y = Math.max(1, targetY - radius); y <= Math.min(collisionMap.getHeightInTiles() - 2, targetY + radius); y++) {
-                for (int x = Math.max(1, targetX - radius); x <= Math.min(collisionMap.getWidthInTiles() - 2, targetX + radius); x++) {
+            for (int y = Math.max(1, targetY - radius); y <= Math.min(collisionMap.getHeightInTiles() - 2,
+                    targetY + radius); y++) {
+                for (int x = Math.max(1, targetX - radius); x <= Math.min(collisionMap.getWidthInTiles() - 2,
+                        targetX + radius); x++) {
                     if (!collisionMap.isWalkable(x, y)) {
                         continue;
                     }
@@ -386,12 +391,15 @@ public class GamePanel extends JPanel implements Runnable {
                         continue;
                     }
                     if (!requireCanOccupy) {
-                        return new int[]{x, y};
+                        return new int[] { x, y };
                     }
-                    float px = x * collisionMap.getTileSize() + (collisionMap.getTileSize() - playerWidthForTile(collisionMap)) / 2f;
-                    float py = y * collisionMap.getTileSize() + (collisionMap.getTileSize() - playerHeightForTile(collisionMap)) / 2f;
-                    if (collisionMap.canOccupy(px, py, playerWidthForTile(collisionMap), playerHeightForTile(collisionMap), margin)) {
-                        return new int[]{x, y};
+                    float px = x * collisionMap.getTileSize()
+                            + (collisionMap.getTileSize() - playerWidthForTile(collisionMap)) / 2f;
+                    float py = y * collisionMap.getTileSize()
+                            + (collisionMap.getTileSize() - playerHeightForTile(collisionMap)) / 2f;
+                    if (collisionMap.canOccupy(px, py, playerWidthForTile(collisionMap),
+                            playerHeightForTile(collisionMap), margin)) {
+                        return new int[] { x, y };
                     }
                 }
             }
@@ -408,14 +416,16 @@ public class GamePanel extends JPanel implements Runnable {
         return playerWidthForTile(collisionMap);
     }
 
-    private boolean hasWalkableNeighbor(CollisionMap collisionMap, Maze maze, int tileX, int tileY, boolean zoneRequired) {
+    private boolean hasWalkableNeighbor(CollisionMap collisionMap, Maze maze, int tileX, int tileY,
+            boolean zoneRequired) {
         return isValidPlayerTile(collisionMap, maze, tileX + 1, tileY, zoneRequired)
                 || isValidPlayerTile(collisionMap, maze, tileX - 1, tileY, zoneRequired)
                 || isValidPlayerTile(collisionMap, maze, tileX, tileY + 1, zoneRequired)
                 || isValidPlayerTile(collisionMap, maze, tileX, tileY - 1, zoneRequired);
     }
 
-    private boolean isValidPlayerTile(CollisionMap collisionMap, Maze maze, int tileX, int tileY, boolean zoneRequired) {
+    private boolean isValidPlayerTile(CollisionMap collisionMap, Maze maze, int tileX, int tileY,
+            boolean zoneRequired) {
         if (!collisionMap.isWalkable(tileX, tileY)) {
             return false;
         }
@@ -429,12 +439,15 @@ public class GamePanel extends JPanel implements Runnable {
         }
         System.out.println("Maze shuffle: switching from " + current.mazePath + " to " + nextMazePath);
         Maze newMaze = loadMazeSafely(nextMazePath);
-        RuntimeState next = buildRuntimeState(newMaze, nextMazePath, current.playerModule.getPlayer(), current.gameplayManager);
+        RuntimeState next = buildRuntimeState(newMaze, nextMazePath, current.playerModule.getPlayer(),
+                current.gameplayManager);
         runtimeState = next;
         activeMazePath = nextMazePath;
         GameplayManager.SwitchReport report = lastEntitySwitchReport;
-        System.out.println("Maze shuffle reconcile: enemy p/r/r=" + report.enemyPreserved() + "/" + report.enemyRelocated() + "/" + report.enemyRemoved()
-                + " pickup p/r/r=" + report.pickupPreserved() + "/" + report.pickupRelocated() + "/" + report.pickupRemoved());
+        System.out.println("Maze shuffle reconcile: enemy p/r/r=" + report.enemyPreserved() + "/"
+                + report.enemyRelocated() + "/" + report.enemyRemoved()
+                + " pickup p/r/r=" + report.pickupPreserved() + "/" + report.pickupRelocated() + "/"
+                + report.pickupRemoved());
     }
 
     private void updateMazeShuffle(double deltaSeconds) {
@@ -508,6 +521,8 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private boolean handleDebugToggle(int keyCode) {
+        if (!DebugSettings.DEV_MODE)
+            return false;
         switch (keyCode) {
             case KeyEvent.VK_F1 -> debugSettings.toggleEnabled();
             case KeyEvent.VK_F2 -> debugSettings.toggleGridVisible();
@@ -577,7 +592,8 @@ public class GamePanel extends JPanel implements Runnable {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         Maze maze = state.maze;
-        double scale = Math.min(getWidth() / (double) maze.getPixelWidth(), getHeight() / (double) maze.getPixelHeight());
+        double scale = Math.min(getWidth() / (double) maze.getPixelWidth(),
+                getHeight() / (double) maze.getPixelHeight());
         int renderWidth = (int) Math.round(maze.getPixelWidth() * scale);
         int renderHeight = (int) Math.round(maze.getPixelHeight() * scale);
         int offsetX = (getWidth() - renderWidth) / 2;
@@ -597,7 +613,6 @@ public class GamePanel extends JPanel implements Runnable {
         if (state.gameplayManager.isGameOver()) {
             pauseMenuOpen = false;
             clearPauseHover();
-            showLeaderboardForGameOver();
             renderResultMenu(g2, state);
         } else if (pauseMenuOpen) {
             renderPauseMenu(g2, state);
@@ -607,116 +622,151 @@ public class GamePanel extends JPanel implements Runnable {
 
     private void renderHUD(Graphics2D g2, RuntimeState state) {
         int score = state.gameplayManager.getScore();
-        int stage = state.gameplayManager.getCurrentStage();
-        int enemies = state.gameplayManager.getAliveEnemyCount();
-        double elapsed = state.gameplayManager.getElapsedTime();
-        int minutes = (int) (elapsed / 60);
-        int seconds = (int) (elapsed % 60);
-        String zoneInfo = "SpawnZone:" + (state.gameplayManager.isSpawnZoneConfigured() ? "On" : "Fallback");
-        String mazeName = new File(state.mazePath).getName();
-        String shuffleInfo;
-        if (mazeShuffleConfig.enabled()) {
-            double remain = Math.max(0.0, mazeShuffleConfig.intervalSeconds() - shuffleElapsedSeconds);
-            shuffleInfo = "Shuffle:" + String.format("%.0fs", remain);
-        } else {
-            shuffleInfo = "Shuffle:Off";
-        }
-        GameplayManager.SwitchReport switchReport = lastEntitySwitchReport;
-        String persistInfo = String.format("Keep E:%d/%d/%d P:%d/%d/%d",
-                switchReport.enemyPreserved(),
-                switchReport.enemyRelocated(),
-                switchReport.enemyRemoved(),
-                switchReport.pickupPreserved(),
-                switchReport.pickupRelocated(),
-                switchReport.pickupRemoved());
-
         boolean invincible = state.gameplayManager.isInvincible();
+        int panelX = 16;
+        int panelY = 10;
+        int panelWidth = 232;
+        int panelHeight = 68;
+        int iconSize = 52;
+        int iconX = panelX + 10;
+        int iconY = panelY + 8;
 
-        g2.setColor(new Color(0, 0, 0, 120));
-        g2.fillRect(0, 0, getWidth(), 34);
+        g2.setColor(new Color(0, 0, 0, 135));
+        g2.fill(new RoundRectangle2D.Float(panelX + 4, panelY + 4, panelWidth, panelHeight, 24, 24));
 
+        Color borderColor = new Color(199, 162, 74);
+        Color fillColor = new Color(63, 35, 10, 220);
         if (invincible) {
             double flash = state.gameplayManager.getInvincibilityTimer();
             boolean visible = ((int) (flash * 6)) % 2 == 0;
-            g2.setColor(visible ? new Color(255, 100, 100) : new Color(220, 220, 220));
-        } else {
-            g2.setColor(new Color(220, 220, 220));
+            if (visible) {
+                borderColor = new Color(255, 216, 120);
+                fillColor = new Color(108, 43, 25, 232);
+            }
         }
 
-        g2.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
-        String hudText = String.format("Score:%d | Stage:%d | Enemies:%d | Time:%d:%02d | Maze:%s | %s | %s | %s | ESC:Pause",
-                score, stage, enemies, minutes, seconds, mazeName, shuffleInfo, zoneInfo, persistInfo);
-        g2.drawString(hudText, 10, 22);
+        g2.setColor(fillColor);
+        g2.fillRoundRect(panelX, panelY, panelWidth, panelHeight, 22, 22);
+        g2.setColor(borderColor);
+        g2.drawRoundRect(panelX, panelY, panelWidth, panelHeight, 22, 22);
+
+        g2.drawImage(HUD_STATUE_ICON, iconX, iconY, iconSize, iconSize, null);
+
+        g2.setColor(new Color(255, 236, 183));
+        g2.setFont(HUD_SCORE_FONT);
+        g2.drawString(Integer.toString(score), panelX + 78, panelY + 42);
+
+        g2.setFont(HUD_HINT_FONT);
+        g2.setColor(new Color(238, 221, 174));
+        g2.drawString("Score", panelX + 80, panelY + 58);
+        g2.drawString("ESC Pause", panelX + 146, panelY + 58);
     }
 
     private void renderPauseMenu(Graphics2D g2, RuntimeState state) {
-        int panelWidth = 560;
-        int panelHeight = 330;
+        int panelWidth = 620;
+        int panelHeight = 360;
         int x = (getWidth() - panelWidth) / 2;
         int y = (getHeight() - panelHeight) / 2;
 
-        g2.setColor(new Color(0, 0, 0, 170));
+        g2.setColor(new Color(7, 10, 18, 190));
         g2.fillRect(0, 0, getWidth(), getHeight());
 
-        g2.setColor(new Color(23, 32, 57, 230));
-        g2.fillRoundRect(x, y, panelWidth, panelHeight, 18, 18);
-        g2.setColor(new Color(226, 233, 249));
-        g2.drawRoundRect(x, y, panelWidth, panelHeight, 18, 18);
+        g2.setColor(new Color(0, 0, 0, 90));
+        g2.fillRoundRect(x + 8, y + 8, panelWidth, panelHeight, 28, 28);
+        g2.setColor(new Color(20, 26, 43, 235));
+        g2.fillRoundRect(x, y, panelWidth, panelHeight, 26, 26);
+        g2.setColor(new Color(205, 173, 92, 235));
+        g2.drawRoundRect(x, y, panelWidth, panelHeight, 26, 26);
+        g2.setColor(new Color(245, 229, 178, 90));
+        g2.drawRoundRect(x + 6, y + 6, panelWidth - 12, panelHeight - 12, 22, 22);
 
         int score = state.gameplayManager.getScore();
         int stage = state.gameplayManager.getCurrentStage();
         double elapsed = state.gameplayManager.getElapsedTime();
         int minutes = (int) (elapsed / 60);
         int seconds = (int) (elapsed % 60);
+        String mazeName = new File(state.mazePath).getName();
 
-        g2.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 34));
-        g2.drawString("PAUSED", x + 140, y + 55);
-        g2.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
-        g2.drawString("Score: " + score, x + 165, y + 100);
-        g2.drawString("Stage: " + stage + "  |  Time: " + minutes + ":" + String.format("%02d", seconds), x + 85, y + 135);
-        g2.drawString("Press ESC to continue", x + 110, y + 170);
+        g2.setColor(new Color(249, 233, 193));
+        g2.setFont(new Font(Font.SERIF, Font.BOLD, 38));
+        g2.drawString("Paused", x + 38, y + 58);
+        g2.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 17));
+        g2.setColor(new Color(206, 214, 230));
+        g2.drawString("Take a breath. Press ESC to continue instantly.", x + 40, y + 86);
+
+        int cardY = y + 116;
+        int cardWidth = 168;
+        int cardHeight = 86;
+        int cardGap = 18;
+        drawPauseStatCard(g2, x + 36, cardY, cardWidth, cardHeight, "Score", Integer.toString(score),
+                new Color(94, 66, 25), new Color(255, 226, 160));
+        drawPauseStatCard(g2, x + 36 + cardWidth + cardGap, cardY, cardWidth, cardHeight, "Stage", Integer.toString(stage),
+                new Color(33, 64, 100), new Color(172, 219, 255));
+        drawPauseStatCard(g2, x + 36 + (cardWidth + cardGap) * 2, cardY, cardWidth, cardHeight, "Time",
+                minutes + ":" + String.format("%02d", seconds), new Color(43, 86, 75), new Color(177, 243, 218));
+
+        g2.setColor(new Color(31, 39, 61, 220));
+        g2.fillRoundRect(x + 36, y + 220, panelWidth - 72, 50, 16, 16);
+        g2.setColor(new Color(110, 127, 166));
+        g2.drawRoundRect(x + 36, y + 220, panelWidth - 72, 50, 16, 16);
+        g2.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+        g2.setColor(new Color(231, 236, 247));
+        g2.drawString("Current Maze: " + mazeName, x + 54, y + 251);
 
         int buttonWidth = 150;
-        int buttonHeight = 44;
-        int resumeX = x + 32;
+        int buttonHeight = 48;
+        int resumeX = x + 46;
         int restartX = x + (panelWidth - buttonWidth) / 2;
-        int exitX = x + panelWidth - buttonWidth - 32;
-        int buttonY = y + 205;
+        int exitX = x + panelWidth - buttonWidth - 46;
+        int buttonY = y + 290;
         pauseResumeBounds = new Rectangle(resumeX, buttonY, buttonWidth, buttonHeight);
         pauseRestartBounds = new Rectangle(restartX, buttonY, buttonWidth, buttonHeight);
         pauseExitBounds = new Rectangle(exitX, buttonY, buttonWidth, buttonHeight);
 
-        g2.setColor(hoverResume ? new Color(92, 128, 216) : new Color(66, 96, 170));
-        g2.fillRoundRect(resumeX, buttonY, buttonWidth, buttonHeight, 12, 12);
-        g2.setColor(new Color(222, 232, 249));
-        g2.drawRoundRect(resumeX, buttonY, buttonWidth, buttonHeight, 12, 12);
-        g2.drawString("Resume", resumeX + 34, buttonY + 30);
+        drawPauseButton(g2, pauseResumeBounds, hoverResume, "Resume", "Back to the run",
+                new Color(57, 100, 178), new Color(132, 192, 255));
+        drawPauseButton(g2, pauseRestartBounds, hoverRestart, "Restart", "New run",
+                new Color(79, 91, 149), new Color(188, 205, 255));
+        drawPauseButton(g2, pauseExitBounds, hoverExit, "Exit to Main", "Leave this run",
+                new Color(146, 63, 63), new Color(255, 178, 178));
+    }
 
-        g2.setColor(hoverRestart ? new Color(114, 137, 182) : new Color(83, 103, 146));
-        g2.fillRoundRect(restartX, buttonY, buttonWidth, buttonHeight, 12, 12);
-        g2.setColor(new Color(227, 236, 252));
-        g2.drawRoundRect(restartX, buttonY, buttonWidth, buttonHeight, 12, 12);
-        g2.drawString("Restart", restartX + 34, buttonY + 30);
+    private void drawPauseStatCard(Graphics2D g2, int x, int y, int width, int height, String label, String value,
+                                   Color fill, Color accent) {
+        g2.setColor(fill);
+        g2.fillRoundRect(x, y, width, height, 18, 18);
+        g2.setColor(accent);
+        g2.drawRoundRect(x, y, width, height, 18, 18);
+        g2.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
+        g2.setColor(new Color(241, 244, 248));
+        g2.drawString(label, x + 18, y + 24);
+        g2.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 30));
+        g2.drawString(value, x + 18, y + 60);
+    }
 
-        g2.setColor(hoverExit ? new Color(206, 96, 96) : new Color(166, 74, 74));
-        g2.fillRoundRect(exitX, buttonY, buttonWidth, buttonHeight, 12, 12);
-        g2.setColor(new Color(245, 225, 225));
-        g2.drawRoundRect(exitX, buttonY, buttonWidth, buttonHeight, 12, 12);
-        g2.drawString("Exit to Main", exitX + 19, buttonY + 30);
-
-        g2.setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 15));
-        g2.setColor(new Color(180, 190, 210));
-        g2.drawString("Current Maze: " + new File(state.mazePath).getName(), x + 40, y + 275);
-        g2.drawString("Police touch = -" + core.gameplay.GameplayConfig.ENEMY_TOUCH_PENALTY + " pts", x + 125, y + 300);
+    private void drawPauseButton(Graphics2D g2, Rectangle bounds, boolean hovered, String title, String subtitle,
+                                 Color fill, Color accent) {
+        Color body = hovered ? accent : fill;
+        g2.setColor(body);
+        g2.fillRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, 16, 16);
+        g2.setColor(new Color(245, 245, 245, hovered ? 235 : 190));
+        g2.drawRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, 16, 16);
+        g2.setColor(new Color(249, 249, 250));
+        g2.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 17));
+        g2.drawString(title, bounds.x + 18, bounds.y + 21);
+        g2.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
+        g2.drawString(subtitle, bounds.x + 18, bounds.y + 36);
     }
 
     private void handleResultClick(RuntimeState state, java.awt.Point point) {
         if (resultSaveBounds.contains(point)) {
             if (!resultSaved) {
                 try {
-                    AppDatabase.saveScore(SessionContext.getCurrentUser(), state.gameplayManager.getScore());
+                    AppDatabase.saveScore(SessionContext.getCurrentUser(), state.gameplayManager.getFinalScore());
                     resultSaved = true;
                     resultStatusMessage = "Score saved";
+                    Window owner = SwingUtilities.getWindowAncestor(this);
+                    LeaderboardUI.open(owner);
                 } catch (Exception ex) {
                     resultStatusMessage = "Save failed: " + ex.getMessage();
                 }
@@ -727,17 +777,6 @@ public class GamePanel extends JPanel implements Runnable {
         if (resultBackBounds.contains(point)) {
             exitToMainMenu();
         }
-    }
-
-    private void showLeaderboardForGameOver() {
-        if (gameOverLeaderboardShown) {
-            return;
-        }
-        gameOverLeaderboardShown = true;
-        SwingUtilities.invokeLater(() -> {
-            Window owner = SwingUtilities.getWindowAncestor(this);
-            LeaderboardUI.open(owner);
-        });
     }
 
     private void renderResultMenu(Graphics2D g2, RuntimeState state) {
@@ -755,7 +794,7 @@ public class GamePanel extends JPanel implements Runnable {
         g2.drawRoundRect(x, y, panelWidth, panelHeight, 18, 18);
 
         String user = SessionContext.getCurrentUser();
-        int score = state.gameplayManager.getScore();
+        int score = state.gameplayManager.getFinalScore();
 
         g2.setColor(new Color(255, 232, 182));
         g2.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 34));
@@ -803,7 +842,60 @@ public class GamePanel extends JPanel implements Runnable {
             CollisionMap collisionMap,
             PlayerModule playerModule,
             GameplayManager gameplayManager,
-            String mazePath
-    ) {
+            String mazePath) {
+    }
+
+    private static BufferedImage createHudStatueIcon() {
+        BufferedImage image = new BufferedImage(80, 80, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = image.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        Color dark = new Color(89, 50, 6);
+        Color mid = new Color(166, 107, 18);
+        Color gold = new Color(220, 171, 58);
+        Color highlight = new Color(255, 228, 122);
+        Color shadow = new Color(56, 29, 0, 180);
+
+        g2.setColor(shadow);
+        g2.fillOval(15, 67, 48, 8);
+
+        g2.setColor(dark);
+        g2.fillRoundRect(11, 55, 58, 10, 6, 6);
+        g2.fillRoundRect(17, 48, 45, 10, 6, 6);
+        g2.fillRoundRect(23, 41, 33, 10, 6, 6);
+
+        g2.setColor(mid);
+        g2.fillRoundRect(13, 53, 56, 10, 6, 6);
+        g2.fillRoundRect(18, 46, 44, 10, 6, 6);
+        g2.fillRoundRect(24, 39, 32, 10, 6, 6);
+
+        g2.setColor(gold);
+        g2.fillRoundRect(27, 21, 26, 24, 12, 12);
+        g2.fillOval(31, 7, 18, 20);
+        g2.fillRoundRect(24, 31, 32, 8, 6, 6);
+        g2.fillRoundRect(22, 37, 36, 8, 6, 6);
+
+        g2.setColor(mid);
+        g2.fillRoundRect(23, 28, 13, 18, 8, 8);
+        g2.fillRoundRect(45, 28, 13, 18, 8, 8);
+        g2.fillRoundRect(28, 43, 24, 8, 6, 6);
+
+        g2.setColor(highlight);
+        g2.fillOval(35, 11, 8, 7);
+        g2.fillRoundRect(34, 24, 8, 15, 4, 4);
+        g2.fillRoundRect(29, 44, 18, 4, 4, 4);
+        g2.fillRoundRect(19, 48, 40, 3, 3, 3);
+        g2.fillRoundRect(18, 56, 41, 3, 3, 3);
+
+        g2.setColor(dark);
+        g2.fillOval(37, 19, 2, 2);
+        g2.fillOval(42, 19, 2, 2);
+        g2.drawArc(38, 22, 6, 4, 190, 160);
+        g2.drawLine(31, 34, 28, 43);
+        g2.drawLine(49, 34, 52, 43);
+        g2.drawLine(33, 34, 46, 34);
+
+        g2.dispose();
+        return image;
     }
 }

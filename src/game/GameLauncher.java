@@ -1,12 +1,13 @@
 package game;
 
+import core.data.LeaderboardUI;
 import panels.GamePanel;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 public class GameLauncher {
-    private static final String GAME_TITLE = "Merged Maze Game";
+    private static final String GAME_TITLE = "อยุธยา พาซิ่ง!";
 
     public static void launchInFrame(JFrame frame) {
         if (frame == null) {
@@ -14,9 +15,9 @@ public class GameLauncher {
         }
 
         stopPreviousGamePanel(frame);
+        LeaderboardUI.close(frame);
 
         GamePanel gamePanel = new GamePanel();
-        frame.setTitle(GAME_TITLE);
         frame.setContentPane(gamePanel);
         frame.pack();
         frame.setLocationRelativeTo(null);

@@ -17,16 +17,20 @@ public final class ProjectPaths {
     }
 
     private static File locateResourcesRoot() {
-        // Prefer using where the classes are loaded from — this typically points to merged_final/out
+        // Prefer using where the classes are loaded from — this typically points to
+        // merged_final/out
         try {
             File codeLoc = new File(ProjectPaths.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-            File maybeProjectRoot = codeLoc.getParentFile() != null ? codeLoc.getParentFile() : null; // one level up (out -> project)
+            File maybeProjectRoot = codeLoc.getParentFile() != null ? codeLoc.getParentFile() : null; // one level up
+                                                                                                      // (out ->
+                                                                                                      // project)
             if (maybeProjectRoot != null) {
                 File candidate = new File(maybeProjectRoot, "resources");
                 if (candidate.exists() && candidate.isDirectory()) {
                     try {
                         System.out.println("ProjectPaths: detected resources at " + candidate.getCanonicalPath());
-                    } catch (IOException ignored) {}
+                    } catch (IOException ignored) {
+                    }
                     return candidate.getCanonicalFile();
                 }
             }
@@ -54,7 +58,8 @@ public final class ProjectPaths {
                 }
             }
             cur = cur.getParentFile();
-            if (cur == null) break;
+            if (cur == null)
+                break;
         }
         return new File("resources");
     }

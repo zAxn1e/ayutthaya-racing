@@ -85,7 +85,7 @@ classDiagram
     MainMenuButtons --> MainMenuState : reads/writes
     MainMenuButtons --> SessionContext : sets user
     MainMenuButtons --> AppDatabase : login/register
-    MainMenuButtons --> LeaderboardUI : opens
+    MainMenuButtons --> LeaderboardUI : opens overlay
 ```
 
 ---
@@ -192,10 +192,12 @@ classDiagram
         -EnemySystem enemySystem
         -Player player
         -int score
+        -Integer finalScoreSnapshot
         -boolean gameOver
         +update(delta) void
         +render(g2) void
         +getScore() int
+        +getFinalScore() int
         +isGameOver() boolean
         +onMazeSwitched(map, maze) SwitchReport
     }
@@ -291,7 +293,7 @@ classDiagram
         +MAX_CAR_ENEMIES = 2$
         +MAX_CHICKEN_ENEMIES = 1$
         +ENEMY_CHASE_BIAS = 0.70$
-        +POINT_SCORE_VALUE = 10$
+        +POINT_SCORE_VALUE = 1$
         +ENEMY_TOUCH_PENALTY = 30$
         ...
     }

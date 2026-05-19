@@ -24,10 +24,10 @@
 ผู้เล่นต้องเก็บแต้ม (Point Pickups) เก็บไอเท็มฆ่าตำรวจ (Kill Pickups) และหลบหนีให้นานที่สุดเพื่อทำคะแนนสูงสุด
 
 ### การเล่นหลัก
-- **เก็บเหรียญ** — ได้คะแนนทีละ 10 แต้ม
-- **เก็บไอเท็มพิเศษ** — ฆ่าตำรวจเฉพาะประเภท + โบนัส 20 แต้ม
+- **เก็บเหรียญ** — ได้คะแนนทีละ 1 แต้ม
+- **เก็บไอเท็มพิเศษ** — ฆ่าตำรวจเฉพาะประเภท + โบนัส 2 แต้ม
 - **หลบหนีตำรวจ** — ถ้าโดนจับ = Game Over!
-- **บันทึกคะแนน** — เก็บลง SQLite Database + แสดง Leaderboard
+- **บันทึกคะแนน** — เก็บลง SQLite Database แล้วเปิด Leaderboard แบบ overlay ในหน้าต่างเดิม
 
 ---
 
@@ -102,8 +102,8 @@ java -cp "out;lib/*" Main editor
 
 ### 3. ระบบ Leaderboard
 - แสดงอันดับ Top 10 ด้วยตัวเลขไทย (๑, ๒, ๓, ...)
-- หน้าต่าง Leaderboard ธีมอยุธยา (พื้นหลังวัด + กรอบทอง)
-- แสดงอัตโนมัติเมื่อ Game Over
+- Leaderboard ธีมอยุธยา (พื้นหลังวัด + กรอบทอง) แสดงเป็น overlay ใน window เดิม
+- เปิดได้จากเมนูหลัก และหลังบันทึกคะแนนจากหน้า Game Over
 - เข้าดูได้จากเมนูหลัก
 
 ### 4. Maze Editor (เครื่องมือเสริม)
@@ -137,7 +137,7 @@ src/
 │   └── GameLauncher.java              # สร้าง GamePanel ใน JFrame
 │
 ├── panels/                            # UI เกมหลัก (2 คลาส)
-│   ├── GamePanel.java                 # Game Loop, Rendering, Input, Pause Menu
+│   ├── GamePanel.java                 # Game Loop, Rendering, Input, Pause Overlay
 │   └── GameDebugRenderer.java         # Debug Overlay Rendering
 │
 ├── core/
@@ -145,9 +145,9 @@ src/
 │   │   ├── PlayerConfig.java          # ค่าฟิสิกส์ผู้เล่น (ความเร็ว, hitbox)
 │   │   └── ProjectPaths.java          # จัดการ Path ไฟล์ทรัพยากร
 │   │
-│   ├── data/                          # ฐานข้อมูลและ Leaderboard (2 คลาส)
+│   ├── data/                          # ฐานข้อมูลและ Leaderboard overlay (2 คลาส)
 │   │   ├── AppDatabase.java           # SQLite: สมัคร/ล็อกอิน/บันทึกคะแนน
-│   │   └── LeaderboardUI.java         # หน้าต่าง Leaderboard แบบ Custom Paint
+│   │   └── LeaderboardUI.java         # Leaderboard overlay แบบ Custom Paint
 │   │
 │   ├── debug/                         # เครื่องมือ Debug (2 คลาส)
 │   │   ├── DebugSettings.java         # Flag เปิด/ปิด Debug ต่างๆ
@@ -212,9 +212,9 @@ Main.main()
   │     │           ├── PlayerModule.update() → Player.move()
   │     │           ├── GameplayManager.update() → Enemy/Pickup/Score
   │     │           ├── Maze Shuffle Timer
-  │     │           ├── ESC → Pause Menu (Resume/Restart/Exit)
-  │     │           └── Game Over → Save Score → Leaderboard → Back to Menu
-  │     └── Leaderboard → LeaderboardUI
+  │     │           ├── ESC → Pause Overlay (Resume/Restart/Exit)
+  │     │           └── Game Over → Save Score → Leaderboard Overlay → Back to Menu
+  │     └── Leaderboard → LeaderboardUI overlay
   │
   ├── [game] → GameLauncher.main() (เกมอย่างเดียว)
   └── [editor] → MazeEditorWindow (Maze Editor)
@@ -245,7 +245,7 @@ Main.main()
 | `MainMenuButtons` | 327 | ระบบปุ่มเมนู — Login, Register, Start, Leaderboard |
 | `PickupSystem` | 300 | ระบบ Pickup — Spawning, Collection, Reconciliation |
 | `Maze` | 254 | โครงสร้างเขาวงกต — Tile Grid, Rendering, Spawn Zone |
-| `LeaderboardUI` | 205 | หน้าต่าง Leaderboard แบบ Custom Paint สไตล์อยุธยา |
+| `LeaderboardUI` | 205 | Leaderboard overlay แบบ Custom Paint สไตล์อยุธยา |
 | `AppDatabase` | 172 | SQLite Database — Users + Leaderboard + SHA-256 |
 
 ---
@@ -260,13 +260,13 @@ Main.main()
 ### 2. ใช้ GUI (1 คะแนน)
 - **Java Swing** — JFrame, JPanel, JLabel, JTextField, JPasswordField, JTable, JScrollPane
 - **Custom Paint** — `paintComponent()` ใน GamePanel, LeaderboardUI, GameDebugRenderer
-- **เมนูเต็มรูปแบบ** — Intro Animation, Login/Register Forms, Lobby, Pause Menu, Game Over Screen, Leaderboard
+- **เมนูเต็มรูปแบบ** — Intro Animation, Login/Register Forms, Lobby, Pause Overlay, Game Over Screen, Leaderboard Overlay
 
 ### 3. ส่วนให้ผู้ใช้ใส่ Input (1 คะแนน)
 - **JTextField** — กรอก Username (จำกัด 10 ตัวอักษรด้วย DocumentFilter)
 - **JPasswordField** — กรอก Password (มีปุ่ม Show/Hide)
 - **Keyboard Input** — WASD / Arrow Keys ควบคุมตัวละคร
-- **Mouse Input** — คลิกปุ่มเมนู, Pause Menu, Game Over
+- **Mouse Input** — คลิกปุ่มเมนู, Pause Overlay, Game Over
 
 ### 4. จำนวนคลาส ≥ 3 คลาส (1 คะแนน)
 - **มีทั้งหมด 48 คลาส** (รวม enum, record, interface, abstract class)
@@ -314,8 +314,8 @@ Main.main()
 ### 11. ความถูกต้องในการทำงาน (2 คะแนน)
 - เกมทำงานได้จริง — เล่นผ่าน, ควบคุมตัวละคร, ศัตรูไล่ล่า, เก็บ Pickup, คะแนนนับถูกต้อง
 - Login/Register — บันทึกและตรวจสอบจาก Database จริง
-- Game Over — หยุดเกม + แสดง Leaderboard + บันทึกคะแนน
-- Pause/Resume — หยุด/เล่นต่อ/Restart/กลับเมนู
+- Game Over — หยุดเกม + แสดงคะแนนสุดท้ายก่อนโดนหัก + บันทึกคะแนน
+- Pause/Resume — Overlay ทันสมัยขึ้น, หยุด/เล่นต่อ/Restart/กลับเมนู
 - Fixed-timestep Game Loop (120Hz physics, 60fps render) — เกมทำงานสม่ำเสมอทุกเครื่อง
 
 ---

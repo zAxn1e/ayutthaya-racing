@@ -75,7 +75,8 @@ public class Maze {
     private final String backgroundFilePath;
 
     public Maze() {
-        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_TILE_SIZE, DEFAULT_BACKGROUND_CLASSPATH, DEFAULT_BACKGROUND_FILE_PATH);
+        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_TILE_SIZE, DEFAULT_BACKGROUND_CLASSPATH,
+                DEFAULT_BACKGROUND_FILE_PATH);
     }
 
     public Maze(String backgroundClasspath, String backgroundFilePath) {
@@ -86,7 +87,8 @@ public class Maze {
         this(widthInTiles, heightInTiles, tileSize, DEFAULT_BACKGROUND_CLASSPATH, DEFAULT_BACKGROUND_FILE_PATH);
     }
 
-    public Maze(int widthInTiles, int heightInTiles, int tileSize, String backgroundClasspath, String backgroundFilePath) {
+    public Maze(int widthInTiles, int heightInTiles, int tileSize, String backgroundClasspath,
+            String backgroundFilePath) {
         this.backgroundClasspath = backgroundClasspath;
         this.backgroundFilePath = backgroundFilePath;
         this.widthInTiles = widthInTiles;
@@ -110,7 +112,8 @@ public class Maze {
     }
 
     public Tile getTile(int x, int y) {
-        if (!isInBounds(x, y)) return Tile.WALL;
+        if (!isInBounds(x, y))
+            return Tile.WALL;
         return tiles[x][y];
     }
 
@@ -147,7 +150,8 @@ public class Maze {
     }
 
     public boolean isWalkable(int x, int y) {
-        if (!isInBounds(x, y)) return false;
+        if (!isInBounds(x, y))
+            return false;
         Tile tile = tiles[x][y];
         return tile.isWalkable();
     }
@@ -223,9 +227,11 @@ public class Maze {
                 if (in != null) {
                     BufferedImage img = ImageIO.read(in);
                     if (img != null) {
-                        System.out.println("Maze.loadBackgroundImage: loaded from classpath " + backgroundClasspath + " => " + img.getWidth() + "x" + img.getHeight());
+                        System.out.println("Maze.loadBackgroundImage: loaded from classpath " + backgroundClasspath
+                                + " => " + img.getWidth() + "x" + img.getHeight());
                     } else {
-                        System.out.println("Maze.loadBackgroundImage: classpath resource returned null: " + backgroundClasspath);
+                        System.out.println(
+                                "Maze.loadBackgroundImage: classpath resource returned null: " + backgroundClasspath);
                     }
                     return img;
                 }

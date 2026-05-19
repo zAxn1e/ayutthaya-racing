@@ -32,7 +32,7 @@ graph TB
 | **SpawnDirector** | นับเวลา, ปลดล็อก Stage, จัดคิว spawn |
 | **PickupSystem** | สร้าง/เก็บ/แสดง Point และ Kill pickup |
 | **EnemySystem** | สร้าง/ย้าย/ฆ่า/แสดง ตำรวจ + AI movement |
-| **GameDebugRenderer** | แสดง debug overlay (grid, hitbox, collision, HUD) |
+| **GameDebugRenderer** | แสดง debug overlay (grid, hitbox, collision, debug HUD) |
 
 ---
 
@@ -60,7 +60,7 @@ graph TB
 │     ├─ GameplayManager.render() — pickups + enemies  │
 │     ├─ PlayerModule.render() — player sprite         │
 │     ├─ Debug overlays (if F1 enabled)                │
-│     └─ HUD (score / stage / time / enemy count)      │
+│     └─ HUD (statue icon + current score)             │
 │  5. Sleep to target ~60fps                           │
 └────────────────────────────────────────────────────┘
 ```
@@ -153,10 +153,10 @@ flowchart TD
 
 | Pickup | Asset | เอฟเฟกต์ |
 |--------|-------|---------|
-| 🟡 **POINT** | `object_point.png` | +10 คะแนน |
-| 🔴 **KILL_FAT** | `kill_fat_00000.png` | ฆ่าตำรวจอ้วนทั้งหมด + 20 คะแนน |
-| 🟠 **KILL_CAR** | `kill_car_00000.png` | ฆ่ารถตำรวจทั้งหมด + 20 คะแนน |
-| 🟣 **KILL_CHICKEN** | `kill_chicken_00000.png` | ฆ่าไก่ตำรวจทั้งหมด + 20 คะแนน |
+| 🟡 **POINT** | `object_point.png` | +1 คะแนน |
+| 🔴 **KILL_FAT** | `kill_fat_00000.png` | ฆ่าตำรวจอ้วนทั้งหมด + 2 คะแนน |
+| 🟠 **KILL_CAR** | `kill_car_00000.png` | ฆ่ารถตำรวจทั้งหมด + 2 คะแนน |
+| 🟣 **KILL_CHICKEN** | `kill_chicken_00000.png` | ฆ่าไก่ตำรวจทั้งหมด + 2 คะแนน |
 
 ### Spawn Rules
 
@@ -194,9 +194,9 @@ flowchart LR
 
 | เอนทิตี้ A | เอนทิตี้ B | ผลลัพธ์ |
 |-----------|-----------|---------|
-| ผู้เล่น | POINT | คะแนน += 10, pickup หายไป |
-| ผู้เล่น | KILL_X | ตำรวจ type X ตายทั้งหมด, คะแนน += 20 |
-| ผู้เล่น | ตำรวจ | **Game Over!** (คะแนน -= 30, min 0) |
+| ผู้เล่น | POINT | คะแนน += 1, pickup หายไป |
+| ผู้เล่น | KILL_X | ตำรวจ type X ตายทั้งหมด, คะแนน += 2 |
+| ผู้เล่น | ตำรวจ | **Game Over!** (เก็บ final score snapshot แล้วค่อยหักคะแนนใน state ปัจจุบัน) |
 | ตำรวจ | ตำรวจ | ไม่มีปฏิสัมพันธ์ |
 | ตำรวจ | Pickup | ไม่มีปฏิสัมพันธ์ |
 
@@ -218,12 +218,12 @@ sequenceDiagram
     Note over GP: Game loop stops updating
 
     GP->>GP: Show Result Screen
-    GP->>GP: Display Score + Time + Stage
+    GP->>GP: Display final score snapshot
 
     alt User clicks "Save Score"
-        GP->>DB: saveScore(username, score)
+        GP->>DB: saveScore(username, finalScore)
         DB-->>GP: saved
-        GP->>LUI: open(frame)
+        GP->>LUI: open(frame overlay)
     end
 
     alt User clicks "Back to Menu"
@@ -260,15 +260,15 @@ maze = maze_v2_layout_2-edited
 
 ---
 
-## 9. Pause Menu
+## 9. Pause Overlay
 
 | ปุ่ม | ผลลัพธ์ |
 |------|---------|
-| **Resume** | ปิดเมนู, เกมเล่นต่อ |
-| **Restart** | หยุด thread → สร้าง GamePanel ใหม่ |
-| **Exit** | กลับเมนูหลัก (MainMenuScreen) |
+| **Resume** | ปิด pause overlay, เกมเล่นต่อ |
+| **Restart** | หยุด thread → สร้าง GamePanel ใหม่ใน window เดิม |
+| **Exit** | กลับเมนูหลัก (MainMenuScreen) ใน window เดิม |
 
-กด **ESC** เพื่อเปิด/ปิด Pause Menu
+กด **ESC** เพื่อเปิด/ปิด pause overlay แบบสรุปสถานะปัจจุบัน (Score, Stage, Time, Maze)
 
 ---
 
@@ -305,7 +305,7 @@ maze = maze_v2_layout_2-edited
 | `ENEMY_CHASE_BIAS` | 0.70 | ความน่าจะเป็นในการไล่ล่า (70%) |
 | `MAX_POINT_PICKUPS` | 5 | Point pickup สูงสุดบนแผนที่ |
 | `POINT_SPAWN_INTERVAL` | 2.0s | ระยะระหว่าง point spawn |
-| `POINT_SCORE_VALUE` | 10 | คะแนนต่อ point pickup |
+| `POINT_SCORE_VALUE` | 1 | คะแนนต่อ point pickup |
 | `MAX_KILL_PICKUPS` | 2 | Kill pickup สูงสุดบนแผนที่ |
 | `KILL_SPAWN_COOLDOWN` | 12.0s | cooldown ระหว่าง kill spawn |
 | `ENEMY_TOUCH_PENALTY` | 30 | คะแนนที่หักเมื่อโดนตำรวจ |
@@ -330,7 +330,7 @@ src/
 │   │   └── ProjectPaths.java          ← File/directory path resolver
 │   ├── data/
 │   │   ├── AppDatabase.java           ← SQLite: users + leaderboard
-│   │   └── LeaderboardUI.java         ← Custom painted leaderboard window
+│   │   └── LeaderboardUI.java         ← Custom painted leaderboard overlay
 │   ├── debug/
 │   │   ├── DebugSettings.java         ← F-key toggle flags
 │   │   └── PlayerDebugSnapshot.java   ← Per-frame debug data

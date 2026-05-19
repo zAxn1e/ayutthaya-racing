@@ -3,8 +3,10 @@ package core.data;
 import core.config.ProjectPaths;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
+import javax.swing.RootPaneContainer;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -20,61 +22,44 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LeaderboardUI extends JFrame {
-    private static final int FRAME_WIDTH = 1024;
-    private static final int FRAME_HEIGHT = 768;
-
-    private Image imgBackground;
-    private Image imgGoldFrame;
-    private Image imgCloseBtn;
-
-    private Font fontTitle;
-    private Font fontHeader;
-    private Font fontContent;
-    private final Rectangle closeBtnRect = new Rectangle(920, 55, 55, 55);
-
-    private LeaderboardUI(Window owner) {
-        setTitle("ทำเนียบยอดฝีมือ");
-        setSize(FRAME_WIDTH, FRAME_HEIGHT);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(owner);
-        setResizable(false);
-        setUndecorated(true);
-        setBackground(new Color(0, 0, 0, 0));
-        loadAssets();
-        CustomPaintPanel paintPanel = new CustomPaintPanel();
-        setupCloseButton(paintPanel);
-        add(paintPanel);
-    }
-
-    private void loadAssets() {
-        fontTitle = new Font("Tahoma", Font.BOLD, 40);
-        fontHeader = new Font("Tahoma", Font.BOLD, 22);
-        fontContent = new Font("Tahoma", Font.PLAIN, 20);
-        imgBackground = loadImageIfExists(ProjectPaths.uiFilePath("bg_temple.png"));
-        imgGoldFrame = loadImageIfExists(ProjectPaths.uiFilePath("frame_gold.png"));
-        imgCloseBtn = loadImageIfExists(ProjectPaths.uiFilePath("btn_close.png"));
-    }
-
-    private Image loadImageIfExists(String path) {
-        ImageIcon icon = new ImageIcon(path);
-        return icon.getIconWidth() > 0 ? icon.getImage() : null;
-    }
-
-    private void setupCloseButton(JPanel panel) {
-        panel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (closeBtnRect.contains(e.getPoint())) {
-                    dispose();
-                }
-            }
-        });
+public final class LeaderboardUI {
+    private LeaderboardUI() {
     }
 
     public static void open(Window owner) {
-        LeaderboardUI leaderboardUI = new LeaderboardUI(owner);
-        leaderboardUI.setVisible(true);
+        if (!(owner instanceof RootPaneContainer container)) {
+            return;
+        }
+        JRootPane rootPane = container.getRootPane();
+        if (rootPane == null) {
+            return;
+        }
+
+        JComponent glassPane = (JComponent) rootPane.getGlassPane();
+        glassPane.removeAll();
+        glassPane.setLayout(null);
+        glassPane.setVisible(true);
+
+        LeaderboardOverlay overlay = new LeaderboardOverlay(glassPane);
+        overlay.setBounds(0, 0, glassPane.getWidth(), glassPane.getHeight());
+        glassPane.add(overlay);
+        glassPane.revalidate();
+        glassPane.repaint();
+    }
+
+    public static void close(Window owner) {
+        if (!(owner instanceof RootPaneContainer container)) {
+            return;
+        }
+        JRootPane rootPane = container.getRootPane();
+        if (rootPane == null) {
+            return;
+        }
+        JComponent glassPane = (JComponent) rootPane.getGlassPane();
+        glassPane.removeAll();
+        glassPane.setVisible(false);
+        glassPane.revalidate();
+        glassPane.repaint();
     }
 
     private static String toThaiNumber(String num) {
@@ -83,8 +68,42 @@ public class LeaderboardUI extends JFrame {
                 .replace('7', '๗').replace('8', '๘').replace('9', '๙').replace('0', '๐');
     }
 
-    private class CustomPaintPanel extends JPanel {
+    private static final class LeaderboardOverlay extends JPanel {
+        private final Image imgBackground;
+        private final Image imgGoldFrame;
+        private final Image imgCloseBtn;
+        private final Font fontTitle;
+        private final Font fontHeader;
+        private final Font fontContent;
+        private final Rectangle closeBtnRect = new Rectangle(920, 55, 55, 55);
         private final List<Object[]> topScores = readScores();
+
+        private LeaderboardOverlay(JComponent glassPane) {
+            setOpaque(false);
+            imgBackground = loadImageIfExists(ProjectPaths.uiFilePath("bg_temple.png"));
+            imgGoldFrame = loadImageIfExists(ProjectPaths.uiFilePath("frame_gold.png"));
+            imgCloseBtn = loadImageIfExists(ProjectPaths.uiFilePath("btn_close.png"));
+            fontTitle = new Font("Tahoma", Font.BOLD, 40);
+            fontHeader = new Font("Tahoma", Font.BOLD, 22);
+            fontContent = new Font("Tahoma", Font.PLAIN, 20);
+
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (closeBtnRect.contains(e.getPoint())) {
+                        glassPane.removeAll();
+                        glassPane.setVisible(false);
+                        glassPane.revalidate();
+                        glassPane.repaint();
+                    }
+                }
+            });
+        }
+
+        private static Image loadImageIfExists(String path) {
+            ImageIcon icon = new ImageIcon(path);
+            return icon.getIconWidth() > 0 ? icon.getImage() : null;
+        }
 
         private List<Object[]> readScores() {
             try {
@@ -106,15 +125,14 @@ public class LeaderboardUI extends JFrame {
             }
         }
 
-        CustomPaintPanel() {
-            setOpaque(false);
-        }
-
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+            g2d.setColor(new Color(0, 0, 0, 140));
+            g2d.fillRect(0, 0, getWidth(), getHeight());
 
             if (imgBackground != null) {
                 g2d.drawImage(imgBackground, 0, 0, getWidth(), getHeight(), this);
@@ -124,20 +142,20 @@ public class LeaderboardUI extends JFrame {
             }
 
             if (imgGoldFrame != null) {
-                g2d.drawImage(imgGoldFrame, 100, 50, FRAME_WIDTH - 200, FRAME_HEIGHT - 100, this);
+                g2d.drawImage(imgGoldFrame, 100, 50, getWidth() - 200, getHeight() - 100, this);
             } else {
                 g2d.setColor(new Color(36, 46, 65, 230));
-                g2d.fillRoundRect(100, 50, FRAME_WIDTH - 200, FRAME_HEIGHT - 100, 30, 30);
+                g2d.fillRoundRect(100, 50, getWidth() - 200, getHeight() - 100, 30, 30);
                 g2d.setColor(new Color(255, 204, 0));
-                g2d.drawRoundRect(100, 50, FRAME_WIDTH - 200, FRAME_HEIGHT - 100, 30, 30);
+                g2d.drawRoundRect(100, 50, getWidth() - 200, getHeight() - 100, 30, 30);
             }
 
-            drawCenteredString(g2d, "ทำเนียบยอดฝีมือ", new Rectangle(100, 115, FRAME_WIDTH - 200, 80), fontTitle, Color.BLACK, 2);
-            drawCenteredString(g2d, "ทำเนียบยอดฝีมือ", new Rectangle(100, 112, FRAME_WIDTH - 200, 80), fontTitle, new Color(255, 204, 0), 0);
+            drawCenteredString(g2d, "ทำเนียบยอดฝีมือ", new Rectangle(100, 115, getWidth() - 200, 80), fontTitle, Color.BLACK, 2);
+            drawCenteredString(g2d, "ทำเนียบยอดฝีมือ", new Rectangle(100, 112, getWidth() - 200, 80), fontTitle, new Color(255, 204, 0), 0);
 
             int startX = 250;
             int startY = 220;
-            int colWidth = (FRAME_WIDTH - (startX * 2)) / 3;
+            int colWidth = (getWidth() - (startX * 2)) / 3;
             g2d.setFont(fontHeader);
             g2d.setColor(new Color(255, 215, 0));
             g2d.drawString("อันดับ", startX + 35, startY);

@@ -1,6 +1,7 @@
 package menu;
 
 import core.data.AppDatabase;
+import core.data.LeaderboardUI;
 import game.GameLauncher;
 import panels.GamePanel;
 
@@ -46,10 +47,10 @@ public class MainMenuScreen {
         System.out.println("MainMenuScreen: start() - loading font and images");
         state.loadCustomFont();
         imageLoader.prepareImages(state);
-        System.out.println("MainMenuScreen: images loaded: frames=" + (state.frames==null?0:state.frames.length) +
-                " login=" + (state.loginFrames==null?0:state.loginFrames.length) +
-                " regis=" + (state.regisFrames==null?0:state.regisFrames.length) +
-                " countdown=" + (state.countdownFrames==null?0:state.countdownFrames.length));
+        System.out.println("MainMenuScreen: images loaded: frames=" + (state.frames == null ? 0 : state.frames.length) +
+                " login=" + (state.loginFrames == null ? 0 : state.loginFrames.length) +
+                " regis=" + (state.regisFrames == null ? 0 : state.regisFrames.length) +
+                " countdown=" + (state.countdownFrames == null ? 0 : state.countdownFrames.length));
         setupFirstScreen();
         System.out.println("MainMenuScreen: setupFirstScreen done; UI should be visible");
     }
@@ -160,6 +161,7 @@ public class MainMenuScreen {
         panel.add(state.label);
 
         state.mainPanel = panel;
+        LeaderboardUI.close(state.appFrame);
         state.appFrame.setContentPane(panel);
         state.appFrame.pack();
         state.appFrame.setLocationRelativeTo(null);
@@ -176,6 +178,7 @@ public class MainMenuScreen {
         if (state.mainPanel == null) {
             setupMainScreen();
         } else {
+            LeaderboardUI.close(state.appFrame);
             state.appFrame.setContentPane(state.mainPanel);
         }
         buttons.goToEnter();
