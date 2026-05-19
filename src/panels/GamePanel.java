@@ -821,12 +821,14 @@ public class GamePanel extends JPanel implements Runnable {
         g2.fillRoundRect(saveX, buttonY, buttonWidth, buttonHeight, 12, 12);
         g2.setColor(new Color(222, 242, 223));
         g2.drawRoundRect(saveX, buttonY, buttonWidth, buttonHeight, 12, 12);
+        g2.setFont(GameFonts.bold(10f));
         g2.drawString(resultSaved ? "Saved" : "Save Score", saveX + 39, buttonY + 31);
 
         g2.setColor(hoverResultBack ? new Color(124, 132, 186) : new Color(90, 99, 150));
         g2.fillRoundRect(backX, buttonY, buttonWidth, buttonHeight, 12, 12);
         g2.setColor(new Color(224, 231, 255));
         g2.drawRoundRect(backX, buttonY, buttonWidth, buttonHeight, 12, 12);
+        g2.setFont(GameFonts.bold(10f));
         g2.drawString("Back to Main", backX + 28, buttonY + 31);
 
         if (!resultStatusMessage.isBlank()) {
