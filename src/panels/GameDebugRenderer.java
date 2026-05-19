@@ -1,5 +1,6 @@
 package panels;
 
+import core.config.GameFonts;
 import core.debug.DebugSettings;
 import core.debug.PlayerDebugSnapshot;
 import core.level.Maze;
@@ -15,8 +16,8 @@ import java.awt.Rectangle;
 import java.util.List;
 
 public final class GameDebugRenderer {
-    private static final Font HUD_FONT = new Font(Font.MONOSPACED, Font.PLAIN, 12);
-    private static final Font HUD_TITLE_FONT = new Font(Font.MONOSPACED, Font.BOLD, 12);
+    private static final Font HUD_FONT = GameFonts.plain(12f);
+    private static final Font HUD_TITLE_FONT = GameFonts.bold(12f);
 
     private GameDebugRenderer() {
     }

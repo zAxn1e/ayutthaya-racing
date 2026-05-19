@@ -1,5 +1,6 @@
 package editor;
 
+import core.config.GameFonts;
 import core.level.Maze;
 
 import javax.swing.JPanel;
@@ -192,7 +193,7 @@ public class MazeEditorPanel extends JPanel {
 
                 if (showLabels && cellSize >= 18) {
                     g2.setColor(tile == Maze.Tile.WALL ? Color.WHITE : new Color(20, 20, 20));
-                    g2.setFont(new Font(Font.MONOSPACED, Font.BOLD, Math.max(10, cellSize / 2)));
+                    g2.setFont(GameFonts.bold(Math.max(10, cellSize / 2)));
                     g2.drawString(String.valueOf(tile.getSymbol()), drawX + cellSize / 3, drawY + (cellSize * 2 / 3));
                 }
 

@@ -1,5 +1,6 @@
 package panels;
 
+import core.config.GameFonts;
 import core.config.PlayerConfig;
 import core.config.ProjectPaths;
 import core.data.AppDatabase;
@@ -56,8 +57,8 @@ public class GamePanel extends JPanel implements Runnable {
     private static final String LEGACY_ACTIVE_MAZE_POINTER = ActiveMazeRegistry.LEGACY_ACTIVE_MAZE_POINTER;
     private static final String DEFAULT_RUNTIME_MAZE = ActiveMazeRegistry.DEFAULT_RUNTIME_MAZE;
     private static final String SHUFFLE_CONFIG_PATH = ProjectPaths.mazeShuffleConfigPath();
-    private static final Font HUD_SCORE_FONT = new Font(Font.SERIF, Font.BOLD, 30);
-    private static final Font HUD_HINT_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
+    private static final Font HUD_SCORE_FONT = GameFonts.bold(22f);
+    private static final Font HUD_HINT_FONT = GameFonts.plain(10f);
     private static final BufferedImage HUD_STATUE_ICON = createHudStatueIcon();
 
     private final DebugSettings debugSettings;
@@ -625,9 +626,9 @@ public class GamePanel extends JPanel implements Runnable {
         boolean invincible = state.gameplayManager.isInvincible();
         int panelX = 16;
         int panelY = 10;
-        int panelWidth = 232;
-        int panelHeight = 68;
-        int iconSize = 52;
+        int panelWidth = 210;
+        int panelHeight = 58;
+        int iconSize = 42;
         int iconX = panelX + 10;
         int iconY = panelY + 8;
 
@@ -654,17 +655,17 @@ public class GamePanel extends JPanel implements Runnable {
 
         g2.setColor(new Color(255, 236, 183));
         g2.setFont(HUD_SCORE_FONT);
-        g2.drawString(Integer.toString(score), panelX + 78, panelY + 42);
+        g2.drawString(Integer.toString(score), panelX + 66, panelY + 33);
 
         g2.setFont(HUD_HINT_FONT);
         g2.setColor(new Color(238, 221, 174));
-        g2.drawString("Score", panelX + 80, panelY + 58);
-        g2.drawString("ESC Pause", panelX + 146, panelY + 58);
+        g2.drawString("Score", panelX + 66, panelY + 48);
+        g2.drawString("ESC", panelX + 154, panelY + 48);
     }
 
     private void renderPauseMenu(Graphics2D g2, RuntimeState state) {
-        int panelWidth = 620;
-        int panelHeight = 360;
+        int panelWidth = 560;
+        int panelHeight = 332;
         int x = (getWidth() - panelWidth) / 2;
         int y = (getHeight() - panelHeight) / 2;
 
@@ -688,37 +689,40 @@ public class GamePanel extends JPanel implements Runnable {
         String sessionText = minutes + " min " + String.format("%02d", seconds) + " sec in this run";
 
         g2.setColor(new Color(249, 233, 193));
-        g2.setFont(new Font(Font.SERIF, Font.BOLD, 38));
+        String pausedTitle = "Paused";
+        g2.setFont(GameFonts.forText(pausedTitle, Font.BOLD, 28f));
         g2.drawString("Paused", x + 38, y + 58);
-        g2.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 17));
+        String pausedHint = "Press ESC to continue";
+        g2.setFont(GameFonts.forText(pausedHint, Font.PLAIN, 14f));
         g2.setColor(new Color(206, 214, 230));
-        g2.drawString("Take a breath. Press ESC to continue instantly.", x + 40, y + 86);
+        g2.drawString(pausedHint, x + 40, y + 82);
 
-        int cardY = y + 116;
-        int cardWidth = 168;
-        int cardHeight = 86;
-        int cardGap = 18;
+        int cardY = y + 104;
+        int cardWidth = 148;
+        int cardHeight = 78;
+        int cardGap = 14;
         drawPauseStatCard(g2, x + 36, cardY, cardWidth, cardHeight, "Score", Integer.toString(score),
                 new Color(94, 66, 25), new Color(255, 226, 160));
-        drawPauseStatCard(g2, x + 36 + cardWidth + cardGap, cardY, cardWidth, cardHeight, "Stage", Integer.toString(stage),
+        drawPauseStatCard(g2, x + 36 + cardWidth + cardGap, cardY, cardWidth, cardHeight, "Stage",
+                Integer.toString(stage),
                 new Color(33, 64, 100), new Color(172, 219, 255));
         drawPauseStatCard(g2, x + 36 + (cardWidth + cardGap) * 2, cardY, cardWidth, cardHeight, "Time",
                 minutes + ":" + String.format("%02d", seconds), new Color(43, 86, 75), new Color(177, 243, 218));
 
         g2.setColor(new Color(31, 39, 61, 220));
-        g2.fillRoundRect(x + 36, y + 220, panelWidth - 72, 50, 16, 16);
+        g2.fillRoundRect(x + 36, y + 198, panelWidth - 72, 46, 16, 16);
         g2.setColor(new Color(110, 127, 166));
-        g2.drawRoundRect(x + 36, y + 220, panelWidth - 72, 50, 16, 16);
-        g2.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+        g2.drawRoundRect(x + 36, y + 198, panelWidth - 72, 46, 16, 16);
+        g2.setFont(GameFonts.forText("Time played: " + sessionText, Font.PLAIN, 10f));
         g2.setColor(new Color(231, 236, 247));
-        g2.drawString("Time played so far: " + sessionText, x + 54, y + 251);
+        g2.drawString("Time played: " + sessionText, x + 54, y + 226);
 
-        int buttonWidth = 150;
-        int buttonHeight = 48;
+        int buttonWidth = 132;
+        int buttonHeight = 44;
         int resumeX = x + 46;
         int restartX = x + (panelWidth - buttonWidth) / 2;
         int exitX = x + panelWidth - buttonWidth - 46;
-        int buttonY = y + 290;
+        int buttonY = y + 264;
         pauseResumeBounds = new Rectangle(resumeX, buttonY, buttonWidth, buttonHeight);
         pauseRestartBounds = new Rectangle(restartX, buttonY, buttonWidth, buttonHeight);
         pauseExitBounds = new Rectangle(exitX, buttonY, buttonWidth, buttonHeight);
@@ -732,30 +736,30 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private void drawPauseStatCard(Graphics2D g2, int x, int y, int width, int height, String label, String value,
-                                   Color fill, Color accent) {
+            Color fill, Color accent) {
         g2.setColor(fill);
         g2.fillRoundRect(x, y, width, height, 18, 18);
         g2.setColor(accent);
         g2.drawRoundRect(x, y, width, height, 18, 18);
-        g2.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
+        g2.setFont(GameFonts.forText(label, Font.PLAIN, 12f));
         g2.setColor(new Color(241, 244, 248));
         g2.drawString(label, x + 18, y + 24);
-        g2.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 30));
-        g2.drawString(value, x + 18, y + 60);
+        g2.setFont(GameFonts.forText(value, Font.BOLD, 22f));
+        g2.drawString(value, x + 18, y + 54);
     }
 
     private void drawPauseButton(Graphics2D g2, Rectangle bounds, boolean hovered, String title, String subtitle,
-                                 Color fill, Color accent) {
+            Color fill, Color accent) {
         Color body = hovered ? accent : fill;
         g2.setColor(body);
         g2.fillRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, 16, 16);
         g2.setColor(new Color(245, 245, 245, hovered ? 235 : 190));
         g2.drawRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, 16, 16);
         g2.setColor(new Color(249, 249, 250));
-        g2.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 17));
-        g2.drawString(title, bounds.x + 18, bounds.y + 21);
-        g2.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
-        g2.drawString(subtitle, bounds.x + 18, bounds.y + 36);
+        g2.setFont(GameFonts.forText(title, Font.BOLD, 9f));
+        g2.drawString(title, bounds.x + 14, bounds.y + 18);
+        g2.setFont(GameFonts.forText(subtitle, Font.PLAIN, 7f));
+        g2.drawString(subtitle, bounds.x + 14, bounds.y + 31);
     }
 
     private void handleResultClick(RuntimeState state, java.awt.Point point) {
@@ -797,11 +801,11 @@ public class GamePanel extends JPanel implements Runnable {
         int score = state.gameplayManager.getFinalScore();
 
         g2.setColor(new Color(255, 232, 182));
-        g2.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 34));
+        g2.setFont(GameFonts.bold(30f));
         g2.drawString("GAME OVER", x + 150, y + 60);
 
         g2.setColor(new Color(237, 238, 246));
-        g2.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 24));
+        g2.setFont(GameFonts.plain(22f));
         g2.drawString("Player: " + user, x + 70, y + 120);
         g2.drawString("Final Score: " + score, x + 70, y + 160);
 
@@ -826,7 +830,7 @@ public class GamePanel extends JPanel implements Runnable {
         g2.drawString("Back to Main", backX + 28, buttonY + 31);
 
         if (!resultStatusMessage.isBlank()) {
-            g2.setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 16));
+            g2.setFont(GameFonts.italic(15f));
             g2.setColor(new Color(230, 230, 230));
             g2.drawString(resultStatusMessage, x + 65, y + 285);
         }

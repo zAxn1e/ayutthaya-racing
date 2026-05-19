@@ -1,5 +1,6 @@
 package core.data;
 
+import core.config.GameFonts;
 import core.config.ProjectPaths;
 
 import javax.swing.ImageIcon;
@@ -83,9 +84,9 @@ public final class LeaderboardUI {
             imgBackground = loadImageIfExists(ProjectPaths.uiFilePath("bg_temple.png"));
             imgGoldFrame = loadImageIfExists(ProjectPaths.uiFilePath("frame_gold.png"));
             imgCloseBtn = loadImageIfExists(ProjectPaths.uiFilePath("btn_close.png"));
-            fontTitle = new Font("Tahoma", Font.BOLD, 40);
-            fontHeader = new Font("Tahoma", Font.BOLD, 22);
-            fontContent = new Font("Tahoma", Font.PLAIN, 20);
+            fontTitle = GameFonts.forText("ทำเนียบยอดฝีมือ", Font.BOLD, 36f);
+            fontHeader = GameFonts.forText("คะแนนสูงสุด", Font.BOLD, 22f);
+            fontContent = GameFonts.forText("๑", Font.PLAIN, 20f);
 
             addMouseListener(new MouseAdapter() {
                 @Override
@@ -182,7 +183,7 @@ public final class LeaderboardUI {
                 g2d.setColor(new Color(90, 32, 32));
                 g2d.fillRoundRect(closeBtnRect.x, closeBtnRect.y, closeBtnRect.width, closeBtnRect.height, 12, 12);
                 g2d.setColor(new Color(245, 225, 225));
-                g2d.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 26));
+                g2d.setFont(GameFonts.forText("X", Font.BOLD, 24f));
                 g2d.drawString("X", closeBtnRect.x + 18, closeBtnRect.y + 37);
             }
         }

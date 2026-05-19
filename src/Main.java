@@ -2,11 +2,11 @@ import editor.MazeEditorWindow;
 import game.GameLauncher;
 import javax.swing.SwingUtilities;
 
-import core.config.ProjectPaths;
-import java.io.File;
+import core.config.GameFonts;
 
 public class Main {
     public static void main(String[] args) {
+        GameFonts.installSwingDefaults();
         if (args.length > 0) {
             if ("editor".equalsIgnoreCase(args[0])) {
                 MazeEditorWindow.openOnEdt();

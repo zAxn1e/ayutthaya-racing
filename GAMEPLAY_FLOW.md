@@ -268,7 +268,7 @@ maze = maze_v2_layout_2-edited
 | **Restart** | หยุด thread → สร้าง GamePanel ใหม่ใน window เดิม |
 | **Exit** | กลับเมนูหลัก (MainMenuScreen) ใน window เดิม |
 
-กด **ESC** เพื่อเปิด/ปิด pause overlay แบบสรุปสถานะปัจจุบัน (Score, Stage, Time, Maze)
+กด **ESC** เพื่อเปิด/ปิด pause overlay แบบสรุปสถานะปัจจุบัน (Score, Stage, Time และเวลาเล่นสะสม)
 
 ---
 

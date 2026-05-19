@@ -429,7 +429,7 @@ merged_final/
 │   ├── slf4j-api-2.0.13.jar
 │   └── slf4j-simple-2.0.13.jar
 │
-├── font/                       ← Custom Thai game font
+├── font/                       ← Gamefont.ttf + system fallback for Thai text
 ├── db.properties               ← Database configuration
 ├── leaderboard.db              ← SQLite database (runtime)
 │
@@ -494,7 +494,7 @@ graph LR
 | **Database** | `SQLException`, `ClassNotFoundException` | catch → แสดง error dialog / fallback |
 | **File I/O** | `IOException` | catch → fallback to default maze / null sprite |
 | **Sprite Loading** | `IOException` | catch → render fallback shape (circle/arc) |
-| **Font Loading** | `FontFormatException` | catch → fallback to `new Font("Tahoma")` |
+| **Font Loading** | `FontFormatException` | catch → fallback to `Tahoma`; ข้อความภาษาไทยใช้ system fallback โดยอัตโนมัติ |
 | **Maze Parsing** | `IllegalArgumentException` | throw → if rows empty or unequal width |
 | **Null Arguments** | `IllegalArgumentException` | throw → `GameLauncher.launchInFrame(null)` |
 | **DB Init Failure** | `IllegalStateException` | throw → wraps original exception |

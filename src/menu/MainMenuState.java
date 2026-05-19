@@ -1,8 +1,9 @@
 package menu;
 
+import core.config.GameFonts;
+
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 
 public class MainMenuState {
     public final JFrame appFrame;
@@ -54,13 +55,6 @@ public class MainMenuState {
     }
 
     public void loadCustomFont() {
-        try {
-            File fontFile = new File("font/Gamefont.ttf");
-            customFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(customFont);
-        } catch (Exception e) {
-            customFont = new Font("Tahoma", Font.BOLD, 20);
-        }
+        customFont = GameFonts.base();
     }
 }

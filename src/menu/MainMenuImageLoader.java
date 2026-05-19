@@ -1,6 +1,7 @@
 package menu;
 
 import javax.swing.*;
+import core.config.GameFonts;
 import core.config.ProjectPaths;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -13,7 +14,7 @@ public class MainMenuImageLoader {
             g.setColor(new Color(200, 200, 200));
             g.fillRect(0, 0, w, h);
             g.setColor(Color.RED);
-            g.setFont(new Font("SansSerif", Font.BOLD, Math.max(12, h / 10)));
+            g.setFont(GameFonts.bold(Math.max(12, h / 10)));
             String txt = "MISSING: " + name;
             FontMetrics fm = g.getFontMetrics();
             int tw = fm.stringWidth(txt);
