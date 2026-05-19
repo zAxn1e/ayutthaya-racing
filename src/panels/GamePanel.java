@@ -685,7 +685,7 @@ public class GamePanel extends JPanel implements Runnable {
         double elapsed = state.gameplayManager.getElapsedTime();
         int minutes = (int) (elapsed / 60);
         int seconds = (int) (elapsed % 60);
-        String mazeName = new File(state.mazePath).getName();
+        String sessionText = minutes + " min " + String.format("%02d", seconds) + " sec in this run";
 
         g2.setColor(new Color(249, 233, 193));
         g2.setFont(new Font(Font.SERIF, Font.BOLD, 38));
@@ -711,7 +711,7 @@ public class GamePanel extends JPanel implements Runnable {
         g2.drawRoundRect(x + 36, y + 220, panelWidth - 72, 50, 16, 16);
         g2.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
         g2.setColor(new Color(231, 236, 247));
-        g2.drawString("Current Maze: " + mazeName, x + 54, y + 251);
+        g2.drawString("Time played so far: " + sessionText, x + 54, y + 251);
 
         int buttonWidth = 150;
         int buttonHeight = 48;
