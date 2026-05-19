@@ -69,7 +69,8 @@ java -cp "out;lib/*" Main editor
 ```
 
 ### ไฟล์ Batch สำเร็จรูป
-- `start_game.bat` — **ตัวหลัก** คอมไพล์ + รันเกมแบบเมนูหลัก
+- `start_game.bat` — **ตัวหลัก** คอมไพล์ + รันเกมแบบเมนูหลัก  
+- `start_without_compile.bat` — รันเกมโดยใช้ class ที่คอมไพล์ไว้แล้ว (ไม่ต้องคอมไพล์ใหม่)
 
 ### สำหรับนักพัฒนา (dev/)
 - `dev/run_test.bat` — รันพร้อมแสดง console output + F1 เปิด Debug Mode
