@@ -6,7 +6,7 @@ enabled=true
 intervalSeconds=15
 
 ; list mazes that can be shuffled (relative to this file's folder)
-mazes=maze_v2_layout_1-zoned,maze_v2_layout_2-zoned
+mazes=maze_layout_1,maze_layout_2
 
 
 
