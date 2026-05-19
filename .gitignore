@@ -48,3 +48,7 @@ leaderboard.db
 *.iml
 .idea/
 Thumbs.db
+
+### Allow out_latest ###
+!out_latest/
+!out_latest/**
