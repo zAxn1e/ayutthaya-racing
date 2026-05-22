@@ -45,8 +45,8 @@ leaderboard.db
 *.sqlite3
 
 ### local editor/system files ###
-*.iml
-.idea/
+#*.iml
+#.idea/
 Thumbs.db
 
 ### Allow out_latest ###
